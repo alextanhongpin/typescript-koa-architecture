@@ -44,13 +44,12 @@ export class UserController {
       ctx.status = status
       await next()
     } catch (error) {
-
+      rootCtx.span.setTag(Tags.ERROR, true)
       rootCtx.span.log({
         'error.kind': 'BadRequest',
         'message': error.message,
         'stack': error.stack
       })
-      rootCtx.span.setTag(Tags.ERROR, true)
 
       status = error.status || 400
       ctx.status = status
@@ -65,6 +64,7 @@ export class UserController {
       rootCtx.span.setTag(Tags.HTTP_METHOD, method)
       rootCtx.span.setTag(Tags.HTTP_STATUS_CODE, status)
       rootCtx.span.setTag(Tags.HTTP_URL, url)
+
       rootCtx.span.finish()
     }
   }

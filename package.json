@@ -10,9 +10,11 @@
   "author": "alextanhongpin <alextan220990@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "@types/koa-bodyparser": "^4.2.0",
     "@types/mysql2": "types/mysql2",
     "jaeger-client": "^3.10.0",
     "koa": "^2.5.1",
+    "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
     "mysql2": "^1.5.3",
     "opentracing": "^0.14.3"

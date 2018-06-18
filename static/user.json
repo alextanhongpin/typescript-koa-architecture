@@ -5,13 +5,19 @@
   "type": "object",
   "properties": {
     "name": {
-      "description": "Name of the product",
+      "description": "Name of the user",
       "type": "string",
       "minLength": 3
+    },
+    "age": {
+      "description": "Age of the user",
+      "type": "integer",
+      "minimum": 0
     }
   },
   "additionalProperties": false,
   "required": [
-    "name"
+    "name",
+    "age"
   ]
 }

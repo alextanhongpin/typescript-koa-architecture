@@ -3,17 +3,14 @@ import { User } from './entity'
 import { Schema } from '../schema'
 
 export interface UserModel {
-  create(name: string): Promise<boolean>
+  create(user: User): Promise<boolean>
   read(): Promise<User[]>
 }
 
 export class UserModelImpl implements UserModel {
   constructor(private repo: UserRepository, private schema: Schema) { }
 
-  async create(name: string): Promise<boolean> {
-    let user: User = {
-      name
-    }
+  async create(user: User): Promise<boolean> {
     let validUser = await this.schema.validateAsync('user', user)
     return this.repo.create(validUser)
   }

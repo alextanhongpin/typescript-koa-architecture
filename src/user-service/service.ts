@@ -1,19 +1,22 @@
+import * as opentracing from 'opentracing'
+
 import { UserModel } from './model'
 import { User } from './entity'
+import { Context, spanFromContext } from '../context'
 
 export interface UserService {
-  create(name: string): Promise<boolean>
-  read(): Promise<User[]>
+  create(ctx: Context, user: User): Promise<boolean>
+  read(ctx: Context): Promise<User[]>
 }
 
 export class UserServiceImpl implements UserService {
   constructor(private model: UserModel) { }
 
-  async create(name: string): Promise<boolean> {
-    return this.model.create(name)
+  async create(ctx: Context, user: User): Promise<boolean> {
+    return this.model.create(user)
   }
 
-  async read(): Promise<User[]> {
+  async read(ctx: Context): Promise<User[]> {
     return this.model.read()
   }
 
@@ -28,16 +31,28 @@ export class UserServiceImpl implements UserService {
   // }
 }
 
-// export class UserServiceDecorator implements UserService {
-//   constructor(private service: UserService, private tracer: opentracing.Tracer) {}
-//   async create(name: string): Promise<boolean> {
-//     // let span = tracer.startSpan('create')
-//     // span.log({ event: 'something', method: ''})
-//     let result = await this.service.create(name)
-//     // span.finish()
-//     return result
-//   }
-//   async read(): Promise<User[]> {
+class TraceServiceDecorator implements UserService {
+  constructor(private service: UserService) { }
 
-//   }
-// }
+  async create(ctx: Context, user: User): Promise<boolean> {
+    ctx = spanFromContext(ctx, 'create-user')
+
+    let result = await this.service.create(ctx, user)
+    ctx.span.finish()
+
+    return result
+  }
+
+  async read(ctx: Context): Promise<User[]> {
+    ctx = spanFromContext(ctx, 'read-user')
+
+    let result = await this.service.read(ctx)
+    ctx.span.finish()
+
+    return result
+  }
+}
+
+export function makeTrace(service: UserService): UserService {
+  return new TraceServiceDecorator(service)
+}

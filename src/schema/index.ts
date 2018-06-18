@@ -1,5 +1,4 @@
 import Ajv from 'ajv'
-import { error } from 'util';
 
 export type SchemaDictionary = {
   [index: string]: Ajv.ValidateFunction
@@ -24,7 +23,7 @@ export class Schema {
     let validate = this.dict[name]
     let valid = validate(schema)
     if (!valid) {
-      throw validate.errors
+      throw new Error(JSON.stringify(validate.errors))
     }
     return schema
   }

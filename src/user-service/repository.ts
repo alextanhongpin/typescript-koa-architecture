@@ -18,6 +18,9 @@ export class MySQLUserRepositoryImpl implements UserRepository {
   async read(): Promise<User[]> {
     let [rows, _fields] = await this.db.query('SELECT * FROM users')
     rows = (<RowDataPacket[]>rows)
-    return rows.map(r => ({ name: r.name }))
+    return rows.map(r => ({
+      name: r.name,
+      age: r.age
+    }))
   }
 }

@@ -1,5 +1,6 @@
 import { UserModel, UserModelImpl } from './model'
-import { UserService, UserServiceImpl } from './service'
+import { UserService, UserServiceImpl, makeTrace } from './service'
+import { decorate } from '../decorator'
 import { UserRepository, MySQLUserRepositoryImpl } from './repository'
 import { Database } from '../database'
 import { Schema } from '../schema/index';
@@ -23,7 +24,7 @@ class ServiceFactory {
     let repo = this.makeRepository()
     let model = this.makeModel(repo, schema)
     let service = this.makeService(model)
-    return service
+    return decorate<UserService>(service, [makeTrace])
   }
 }
 

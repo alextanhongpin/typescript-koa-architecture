@@ -1,9 +1,10 @@
 import Koa from 'koa'
 
-import { connect, Database } from './database'
+import { connect } from './database'
 import { makeUserController, attachControllers } from './controller'
-import { SchemaFactory } from './schema'
+import { makeSchema } from './schema'
 import { makeTracer } from './tracer'
+
 import makeUserService from './user-service'
 import userSchema from '../static/user.json'
 
@@ -12,15 +13,16 @@ import userSchema from '../static/user.json'
 
   let tracer = makeTracer('test-svc')
 
-  let span = tracer.startSpan('hello')
+  // Tracer example
+  // let span = tracer.startSpan('hello')
   // span.setTag(opentracing.Tags.ERROR, true)
-  span.log({ event: 'world' })
-  span.finish()
+  // span.log({ event: 'world' })
+  // span.finish()
 
-  let schema = SchemaFactory()
+  let schema = makeSchema()
   schema.register('user', userSchema)
 
-  const db: Database = await connect('localhost', 'user', 'pass', 'db', 10)
+  const db = await connect('localhost', 'user', 'pass', 'db', 10)
 
   let users = makeUserService(db, schema)
 

@@ -30,7 +30,7 @@ export class Schema {
   }
 }
 
-export function SchemaFactory(): Schema {
+export function makeSchema(): Schema {
   let defaultOptions = {
     allErrors: true,
     removeAdditional: true,

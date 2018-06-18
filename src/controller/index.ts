@@ -4,6 +4,8 @@ import { UserService } from '../user-service/service'
 import { Context, spanFromContext, contextFromHttpHeaders } from '../context'
 import * as opentracing from 'opentracing'
 
+const { Tags } = opentracing
+
 export interface Controller {
   attach(app: Koa): void
 }
@@ -30,6 +32,7 @@ export class UserController {
   }
 
   async traceMiddleware(ctx: Koa.Context, next: Function) {
+    let component = 'http'
     let method = 'GET'
     let status: number = 200
     let url = ctx.url
@@ -47,7 +50,7 @@ export class UserController {
         'message': error.message,
         'stack': error.stack
       })
-      rootCtx.span.setTag('error', true)
+      rootCtx.span.setTag(Tags.ERROR, true)
 
       status = error.status || 400
       ctx.status = status
@@ -58,10 +61,10 @@ export class UserController {
         message: error.message
       }
     } finally {
-      rootCtx.span.setTag('component', 'http')
-      rootCtx.span.setTag('http.method', method)
-      rootCtx.span.setTag('http.status_code', status)
-      rootCtx.span.setTag('http.url', url)
+      rootCtx.span.setTag(Tags.COMPONENT, component)
+      rootCtx.span.setTag(Tags.HTTP_METHOD, method)
+      rootCtx.span.setTag(Tags.HTTP_STATUS_CODE, status)
+      rootCtx.span.setTag(Tags.HTTP_URL, url)
       rootCtx.span.finish()
     }
   }

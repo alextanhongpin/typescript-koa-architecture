@@ -1,5 +1,5 @@
 export interface Decorator<T> {
-  (service: T): T
+  (service: T, ...args: any[]): T
 }
 
 export function decorate<T>(service: T, decorators: Decorator<T>[]): T {

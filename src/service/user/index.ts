@@ -1,9 +1,10 @@
 import { UserModel, UserModelImpl } from './model'
-import { UserService, UserServiceImpl, makeTrace } from './service'
-import { decorate } from '../decorator'
+import { UserService, UserServiceImpl, makeTracer, makeLogger } from './service'
+import { decorate } from '../../util/decorator'
 import { UserRepository, MySQLUserRepositoryImpl } from './repository'
-import { Database } from '../database'
-import { Schema } from '../schema/index';
+import { Database } from '../../app/database'
+import { Schema } from '../../util/schema';
+import { Logger } from '../../app/logger';
 
 class ServiceFactory {
   constructor(private db: Database) { }
@@ -20,14 +21,14 @@ class ServiceFactory {
     return new UserServiceImpl(model)
   }
 
-  make(schema: Schema): UserService {
+  make(schema: Schema, log: Logger): UserService {
     let repo = this.makeRepository()
     let model = this.makeModel(repo, schema)
     let service = this.makeService(model)
-    return decorate<UserService>(service, [makeTrace])
+    return decorate<UserService>(service, [makeLogger(log), makeTracer])
   }
 }
 
-export default function makeUserService(db: Database, schema: Schema): UserService {
-  return new ServiceFactory(db).make(schema)
+export default function makeUserService(db: Database, schema: Schema, log: Logger): UserService {
+  return new ServiceFactory(db).make(schema, log)
 }

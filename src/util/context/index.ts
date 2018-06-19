@@ -1,6 +1,6 @@
-import * as opentracing from 'opentracing'
-const { Tags, FORMAT_HTTP_HEADERS } = opentracing
+import { Tracer, Tags, FORMAT_HTTP_HEADERS } from 'opentracing'
 import { IncomingHttpHeaders } from 'http'
+import uuidv1 from 'uuid/v1'
 
 export type Context = {
   [index: string]: any
@@ -17,7 +17,7 @@ export function spanFromContext(ctx: Context, name: string): Context {
 }
 
 
-export function contextFromHttpHeaders(name: string, tracer: opentracing.Tracer, headers: IncomingHttpHeaders): Context {
+export function contextFromHttpHeaders(name: string, tracer: Tracer, headers: IncomingHttpHeaders): Context {
   let parentSpanContext: any = tracer.extract(FORMAT_HTTP_HEADERS, headers)
   let isValidSpan = parentSpanContext && parentSpanContext._spanId !== undefined
 
@@ -35,4 +35,8 @@ export function contextFromHttpHeaders(name: string, tracer: opentracing.Tracer,
   }
 
   return rootCtx
+}
+
+export function contextWithRequestId(ctx: Context): Context {
+  return ctx.requestId ? ctx : { ...ctx, requestId: uuidv1() }
 }

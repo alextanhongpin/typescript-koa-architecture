@@ -1,7 +1,7 @@
 import Koa from 'koa'
 import Router from 'koa-router'
-import { UserService } from '../user-service/service'
-import { Context, spanFromContext, contextFromHttpHeaders } from '../context'
+import { UserService } from '../service/user/service'
+import { Context, spanFromContext, contextFromHttpHeaders } from '../util/context'
 import * as opentracing from 'opentracing'
 
 const { Tags } = opentracing
@@ -38,7 +38,9 @@ export class UserController {
     let url = ctx.url
 
     let rootCtx = contextFromHttpHeaders('http_server', this.tracer, ctx.req.headers)
-    ctx.state.rootCtx = rootCtx
+    ctx.state.rootCtx = ctx.state.rootCtx
+      ? { ...ctx.state.rootCtx, rootCtx }
+      : rootCtx
 
     try {
       ctx.status = status

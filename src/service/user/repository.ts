@@ -1,4 +1,4 @@
-import { Database } from '../database'
+import { Database } from '../../app/database'
 import { User } from './entity'
 import { RowDataPacket, OkPacket } from 'mysql2'
 

@@ -1,6 +1,6 @@
 import { UserRepository } from './repository'
 import { User } from './entity'
-import { Schema } from '../schema'
+import { Schema } from '../../util/schema'
 
 export interface UserModel {
   create(user: User): Promise<boolean>
